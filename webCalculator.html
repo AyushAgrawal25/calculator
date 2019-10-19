@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link href="https://fonts.googleapis.com/css?family=Montserrat:600,700&display=swap" rel="stylesheet">
+        <title> Web Calculator</title>
+        <link rel="stylesheet" href="webCalci.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    </head>
+    <body>
+        <div class="web-calci" ng-app="qbApp" ng-controller="qbCtrl">
+            <div class="web-calci-content">
+                <div class="calci-display">
+                    {{displayText}}
+                    <div class="calculated-value">
+                    {{displayValue}}
+                    </div>
+                </div>
+                <div class="calci-inputs">
+                    <div class="button-row">
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('C')">Clear</button>
+                        </div>
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('/')">/</button>
+                        </div>
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('*')">*</button>
+                        </div>
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('D')">Delete</button>
+                        </div>
+                    </div>
+                    <div class="button-row">
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('7')">7</button>
+                        </div>
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('8')">8</button>
+                        </div>
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('9')">9</button>
+                        </div>
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('-')">-</button>
+                        </div>
+                    </div>
+                    <div class="button-row">
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('4')">4</button>
+                        </div>
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('5')">5</button>
+                        </div>
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('6')">6</button>
+                        </div>
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('+')">+</button>
+                        </div>
+                    </div>
+                    <div class="button-row">
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('1')">1</button>
+                        </div>
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('2')">2</button>
+                        </div>
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('3')">3</button>
+                        </div>
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('=')">=</button>
+                        </div>
+                    </div>
+                    <div class="button-row">
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('.')">.</button>
+                        </div>
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('0')">0</button>
+                        </div>
+                        <div class="input-button">
+                            <button>Empty</button>
+                        </div>
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('E')">Exit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            var App = angular.module('qbApp', []);
+            App.controller('qbCtrl', function($scope) {
+                var qbInputButtons=document.querySelectorAll(".input-button");
+                
+                $scope.displayText="";
+                $scope.displayValue;
+                var displayContents="1234567890./*-+r";
+                var nums="0123456789.";
+                var operas="/*-+r";
+                $scope.calc=function(val1,opera,val2){
+                    var retVal;
+                    if(opera=="+")
+                    {
+                        retVal=val1+val2;
+                    }
+                    else if(opera=="-")
+                    {
+                        retVal=val1-val2;
+                    }
+                    else if(opera=="*")
+                    {
+                        retVal=val1*val2;
+                    }
+                    else if(opera=="/")
+                    {
+                        retVal=val1/val2;
+                    }
+                    return retVal;
+                }
+                $scope.qbInputFun=function(param){
+                    if(displayContents.includes(param))
+                    {
+                        $scope.displayText+=param;
+                    }
+                    else if(param=="=")
+                    {
+                        if(nums.includes(($scope.displayText[0]))&&(nums.includes($scope.displayText[$scope.displayText.length-1])))
+                        {
+                            var calculatedVal=0;
+                            var val=""
+                            var value1;
+                            var opera;
+                            var value2;
+                            angular.forEach($scope.displayText,function(value,key){
+                                if(nums.includes(value))
+                                {
+                                    val+=value;
+                                }
+                                else if(operas.includes(value))
+                                {
+                                    if(!value1)
+                                    {
+                                        opera=value;
+                                        value1=parseFloat(val);
+                                    }
+                                    else
+                                    {
+                                        value2=parseFloat(val);
+                                        value1=$scope.calc(value1,opera,value2);
+                                        opera=value;
+                                        value2="";
+                                    }
+                                    val="";
+                                } 
+                            });
+                            value2=parseFloat(val);
+                            value1=$scope.calc(value1,opera,value2);
+                            $scope.displayValue=value1;
+                        }
+                        else{
+                            alert("Operational Error");
+                        }
+                    }
+                    else if(param=="C")
+                    {
+                        console.log($scope.displayText);
+                        $scope.displayText="";
+                        $scope.displayValue="";
+                    }
+                    else if(param=="D")
+                    {
+                        var newStr="";
+                        var strLength=$scope.displayText.length-2;
+                        for(var i=0; i<=strLength; i++)
+                        {
+                            newStr+=$scope.displayText[i]
+                        }
+                        $scope.displayText=newStr;
+                    }
+
+                }
+            });
+        </script>
+    </body>
+</html>

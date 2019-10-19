@@ -1,0 +1,39 @@
+.web-calci{
+    width:auto;
+    height:auto
+}
+.web-calci-content{
+    background-color:rgb(212, 203, 203);
+    width:400px;
+    height:500px;
+}
+.calci-display{
+    width:100%;
+    font-size: 2.25rem;
+    overflow: hidden;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: normal;
+    background-color: rgb(241, 237, 228);
+    height:100px;
+}
+.caculated-value{
+    float:right;
+}
+.calci-inputs{
+    width:100%;
+    height:500px;
+}
+.button-row{
+    width: 100%;
+    height:20%;
+}
+.input-button{
+    width:25%;
+    height:100%;
+    float:left;
+}
+.input-button button{
+    width:100%;
+    height:100%;
+    font-size: 1.9rem;
+}
