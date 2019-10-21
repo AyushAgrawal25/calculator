@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link href="https://fonts.googleapis.com/css?family=Montserrat:600,700&display=swap" rel="stylesheet">
+        <title> Web Calculator</title>
+        <link rel="stylesheet" href="webCalci.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    </head>
+    <body>
+        <div class="web-calci" ng-app="qbApp" ng-controller="qbCtrl">
+            <div class="web-calci-content">
+                <div class="calci-display">
+                    {{displayText}}
+                    <div class="calculated-value">
+                    {{displayValue}}
+                    </div>
+                </div>
+                <div class="calci-inputs">
+                    <div class="button-row">
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('C')">Clear</button>
+                        </div>
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('/')">/</button>
+                        </div>
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('*')">*</button>
+                        </div>
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('D')">Delete</button>
+                        </div>
+                    </div>
+                    <div class="button-row">
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('sin')">sin</button>
+                        </div>
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('cos')">cos</button>
+                        </div>
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('tan')">tan</button>
+                        </div>
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('log')">log</button>
+                        </div>
+                    </div>
+                    <div class="button-row">
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('7')">7</button>
+                        </div>
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('8')">8</button>
+                        </div>
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('9')">9</button>
+                        </div>
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('-')">-</button>
+                        </div>
+                    </div>
+                    <div class="button-row">
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('4')">4</button>
+                        </div>
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('5')">5</button>
+                        </div>
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('6')">6</button>
+                        </div>
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('+')">+</button>
+                        </div>
+                    </div>
+                    <div class="button-row">
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('1')">1</button>
+                        </div>
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('2')">2</button>
+                        </div>
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('3')">3</button>
+                        </div>
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('=')">=</button>
+                        </div>
+                    </div>
+                    <div class="button-row">
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('.')">.</button>
+                        </div>
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('0')">0</button>
+                        </div>
+                        <div class="input-button">
+                            <button ng-click="qbInputFun('(')">(</button>
+                        </div>
+                        <div class="input-button">
+                            <button ng-click="qbInputFun(')')">)</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            var App = angular.module('qbApp', []);
+            App.controller('qbCtrl', function($scope) {
+                var qbInputButtons=document.querySelectorAll(".input-button");
+                
+                $scope.displayText="";
+                $scope.currentValue="";
+                var displayContents="1234567890./*-+";
+                var nums="0123456789.";
+                var operas="/*-+";
+                var otherOperas="sincostanlog";
+                var parenthesis="()";
+                var enteredValues=[];
+                var enteredOperators=[];
+                $scope.calc=function(val1,opera,val2){
+                    var retVal;
+                    if(opera=="+")
+                    {
+                        retVal=val1+val2;
+                    }
+                    else if(opera=="-")
+                    {
+                        retVal=val1-val2;
+                    }
+                    else if(opera=="*")
+                    {
+                        retVal=val1*val2;
+                    }
+                    else if(opera=="/")
+                    {
+                        retVal=val1/val2;
+                    }
+                    return retVal;
+                }
+                $scope.qbInputFun=function(param){
+                    if(operas.includes(param))
+                    {
+                        if((operas.includes($scope.displayText[$scope.displayText.length-1]))||(!$scope.displayText))
+                        {
+                            alert("Operational Error");
+                        }
+                        else
+                        {
+                            var req=0
+                            angular.forEach($scope.currentValue,function(value,key){
+                                if(value=="(")
+                                {
+                                    req++;
+                                }
+                                else if(value==")")
+                                {
+                                    req--;
+                                }
+                            });
+                            if(req>0)
+                            {
+                                $scope.displayText+=param;
+                            }
+                            else
+                            {
+                                enteredOperators.push(param);
+                                enteredValues.push($scope.currentValue);
+                                $scope.currentValue="";
+                                $scope.displayText+=param;
+                            }
+                        }
+                    }
+                    else if(nums.includes(param))
+                    {
+                        if(($scope.displayText[$scope.displayText.length-1])===")")
+                        {
+                            alert("Operational Error");
+                        }
+                        else 
+                        {
+                            $scope.currentValue+=param;
+                            $scope.displayText+=param;
+                        }
+                    }
+                    else if(otherOperas.includes(param))
+                    {
+                        if((!$scope.displayText)||(operas.includes($scope.displayText[$scope.displayText.length-1])))
+                        {
+                            if(param=="sin")
+                            {
+                                var sinOpera="sin(";
+                                $scope.currentValue=sinOpera;
+                                $scope.displayText+=sinOpera;
+                            }
+                            else if(param=="cos")
+                            {
+                                var cosOpera="cos(";
+                                $scope.currentValue=cosOpera;
+                                $scope.displayText+=cosOpera;
+                            }
+                            else if(param=="tan")
+                            {
+                                var tanOpera="tan(";
+                                $scope.currentValue=tanOpera;
+                                $scope.displayText+=tanOpera;
+                            }
+                            else if(param=="log")
+                            {
+                                var logOpera="log(";
+                                $scope.currentValue=logOpera;
+                                $scope.displayText+=logOpera;
+                            }
+                        }
+                        else 
+                        {
+                            alert("Operational error");
+                        }
+                    }
+                    else if(parenthesis.includes(param))
+                    {
+                        if(param==")")
+                        {
+                            var req=0;
+                            angular.forEach($scope.currentValue,function(value,key){
+                                if(value=="(")
+                                {
+                                    req++;
+                                }
+                                else if(value==")")
+                                {
+                                    req--;
+                                }
+                            });
+                            if(req)
+                            {
+                                $scope.displayText+=")";
+                                $scope.currentValue+=")";
+                            }
+                            else 
+                            {
+                                alert("Operational Error");
+                            }
+                        }
+                        else 
+                        {
+                            if((operas.includes($scope.displayText[$scope.displayText.length-1]))||(!$scope.displayText[$scope.displayText.length-1]))
+                            {
+                                $scope.displayText+="(";
+                                $scope.currentValue+="(";
+                            }
+                            else 
+                            {
+                                alert("Operational Error");
+                            }
+                        }
+                    }
+                    else if(param==="=")
+                    {
+                        if((operas.includes($scope.displayText[$scope.displayText.length-1]))||(($scope.displayText[$scope.displayText.length-1])=="("))
+                        {
+                            alert("Operational Error");
+                        }
+                        else
+                        {
+                            enteredValues.push($scope.currentValue);
+                            var result=calArrayFun(enteredValues,enteredOperators);
+                            if(result.toString()==="NaN")
+                            {
+                                alert("Operational Error");
+                                enteredValues=[];
+                                enteredOperators=[];
+                                $scope.displayText="";
+                                $scope.currentValue="";
+                            }
+                            else
+                            {
+                                $scope.displayText=result.toString();
+                                enteredOperators=[];
+                                enteredValues=[];
+                                $scope.currentValue=result.toString();
+                            }
+                        }
+                    }
+                    else if(param=="C")
+                    {
+                        enteredValues=[];
+                        enteredOperators=[];
+                        $scope.displayText="";
+                        $scope.currentValue="";
+                    }
+                    else if(param=="D")
+                    {
+                        if(nums.includes($scope.displayText[$scope.displayText.length-1]))
+                        {
+                            var newDisplayText="";
+                            for(var i=0; i<($scope.displayText.length-1); i++)
+                            {
+                                newDisplayText+=$scope.displayText[i];
+                            }
+                            $scope.displayText=newDisplayText;
+                            
+                            var newCurrentValue="";
+                            for(var i=0; i<($scope.currentValue.length-1); i++)
+                            {
+                                newCurrentValue+=$scope.currentValue[i];
+                            }
+                            $scope.currentValue=newCurrentValue;
+                        }
+                        else if(($scope.displayText[$scope.displayText.length-1])=="(")
+                        {
+                            var lastFourLetters=$scope.displayText[$scope.displayText.length-4]+$scope.displayText[$scope.displayText.length-3]+$scope.displayText[$scope.displayText.length-2];
+                            if(otherOperas.includes(lastFourLetters))
+                            {
+                                var newDisplayText="";
+                                for(var i=0; i<($scope.displayText.length-4); i++)
+                                {
+                                    newDisplayText+=$scope.displayText[i];
+                                }
+                                $scope.displayText=newDisplayText;
+                                $scope.currentValue="";
+                            }
+                            else
+                            {
+                                var newDisplayText="";
+                                for(var i=0; i<($scope.displayText.length-1); i++)
+                                {
+                                    newDisplayText+=$scope.displayText[i];
+                                }
+                                $scope.displayText=newDisplayText;
+                                
+                                var newCurrentValue="";
+                                for(var i=0; i<($scope.currentValue.length-1); i++)
+                                {
+                                    newCurrentValue+=$scope.currentValue[i];
+                                }
+                                $scope.currentValue=newCurrentValue;
+                            }
+                        }
+                        else if(($scope.displayText[$scope.displayText.length-1])==")")
+                        {
+                            var newDisplayText="";
+                            for(var i=0; i<($scope.displayText.length-1); i++)
+                            {
+                                newDisplayText+=$scope.displayText[i];
+                            }
+                            $scope.displayText=newDisplayText;
+                            
+                            var newCurrentValue="";
+                            for(var i=0; i<($scope.currentValue.length-1); i++)
+                            {
+                                newCurrentValue+=$scope.currentValue[i];
+                            }
+                            $scope.currentValue=newCurrentValue;
+                        }
+                        else if(operas.includes($scope.displayText[$scope.displayText.length-1]))
+                        {
+                            var newEnteredOperators=[];
+                            for(var i=0; i<(enteredOperators.length-1);i++)
+                            {
+                                newEnteredOperators.push(enteredOperators[i]);
+                            }
+                            enteredOperators=newEnteredOperators;
+
+                            var newEnteredValues=[];
+                            for(var i=0; i<(enteredValues.length-1);i++)
+                            {
+                                newEnteredValues.push(enteredValues[i]);
+                            }
+                            $scope.currentValue=enteredValues[enteredValues.length-1];
+                            enteredValues=newEnteredValues;
+                            
+
+                            var newDisplayText="";
+                            for(var i=0; i<($scope.displayText.length-1); i++)
+                            {
+                                newDisplayText+=$scope.displayText[i];
+                            }
+                            $scope.displayText=newDisplayText;
+                        }
+                    }
+                }
+
+                var otherCalc=function(str){
+                    var retVal=0;
+                    if(str.includes("sin"))
+                    {
+                        var par=0;
+                        var angle="";
+                        angular.forEach(str,function(value,key){
+                            if(value=="(")
+                            {
+                                par=1;
+                            }
+                            else if(value==")")
+                            {
+                                par=0;
+                            }
+                            else if((nums.includes(value))&&(par))
+                            {
+                                angle+=value;
+                            }
+                        });
+                        retVal=Math.sin(parseFloat(angle));
+                    }
+                    else if(str.includes("cos"))
+                    {
+                        var par=0;
+                        var angle="";
+                        angular.forEach(str,function(value,key){
+                            if(value=="(")
+                            {
+                                par=1;
+                            }
+                            else if(value==")")
+                            {
+                                par=0;
+                            }
+                            else if((nums.includes(value))&&(par))
+                            {
+                                angle+=value;
+                            }
+                        });
+                        retVal=Math.cos(parseFloat(angle));
+                    }
+                    else if(str.includes("tan"))
+                    {
+                        var par=0;
+                        var angle="";
+                        angular.forEach(str,function(value,key){
+                            if(value=="(")
+                            {
+                                par=1;
+                            }
+                            else if(value==")")
+                            {
+                                par=0;
+                            }
+                            else if((nums.includes(value))&&(par))
+                            {
+                                angle+=value;
+                            }
+                        });
+                        retVal=Math.tan(parseFloat(angle));
+                    }
+                    else if(str.includes("log"))
+                    {
+                        var par=0;
+                        var angle="";
+                        angular.forEach(str,function(value,key){
+                            if(value=="(")
+                            {
+                                par=1;
+                            }
+                            else if(value==")")
+                            {
+                                par=0;
+                            }
+                            else if((nums.includes(value))&&(par))
+                            {
+                                angle+=value;
+                            }
+                        });
+                        retVal=Math.log(parseFloat(angle));
+                    }
+                    return retVal;
+                }
+
+                var calArrayFun=function(entVals,entOperas){
+                    var finalVal=0;
+                    if((entVals[0].includes("sin"))||(entVals[0].includes("tan"))||(entVals[0].includes("cos"))||(entVals[0].includes("log")))
+                    {
+                        finalVal=otherCalc(entVals[0]);
+                    }
+                    else
+                    {
+                        finalVal=parseFloat(entVals[0]);
+                    }
+
+                    angular.forEach(entOperas,function(value,key){
+                        var val2=0;
+                        if((entVals[key+1].includes("sin"))||(entVals[key+1].includes("cos"))||(entVals[key+1].includes("tan"))||(entVals[key+1].includes("log")))
+                        {
+                            val2=otherCalc(entVals[key+1]);
+                        }
+                        else
+                        {
+                            val2=parseFloat(entVals[key+1]);
+                        }
+                        finalVal=$scope.calc(finalVal,value,val2);
+                    });
+                    return finalVal;
+                }
+            });
+        </script>
+    </body>
+</html>
